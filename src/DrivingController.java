@@ -34,13 +34,69 @@ public class DrivingController {
 		int opponent_rank	 = rankArray[DrivingInterface.rank_opponent_rank	];		
 		////////////////////// END input parameters
 		
-		// To-Do : Make your driving algorithm
+		
+		System.out.println("======================== start ================================");
+
+		double user_brakeCtl    = 0.0;
+		
+		double user_steerCtl    = 0.0;
+		double user_steer_coeff = 0.541052; // 핸들계수(트랙정보에 따라 셋팅) 
+		double user_dist_center = toMiddle;
+		
+		// 트랙 코스에 따른 처리
+		if(track_curve_type == 1){ // 우회전 
+			user_dist_center = toMiddle + ( track_width/5 );  
+		}else if(track_curve_type == 2){ // 좌회전
+			user_dist_center = toMiddle - ( track_width/5 ); 
+		}else{
+			user_dist_center = toMiddle;
+		}
+
+		double user_accelCtl    = 0.0;
+		double user_v 		    = 0.0;
+		float user_v_max        = 50; // 최고속도(트랙정보에 따라 셋팅)
+		float user_c_coeff      = (float)2.772;
+		float user_d_coeff		= (float)-0.693;
+		float user_dist_cars    = 10;
+		
+		System.out.println("track_curve_type : " + track_curve_type);
+		System.out.println("toMiddle : " + toMiddle);
+		System.out.println("user_dist_center : " + user_dist_center);
+		System.out.println("angle : " + angle);
+		System.out.println("track_width : " + track_width);	
+		
+		// 최적속도
+		user_v = user_v_max * (1 - Math.exp(-user_c_coeff/user_v_max * user_dist_cars - user_d_coeff));
+		
+		System.out.println("user_v : " + user_v);
 		
 
+		if(speed > 20){
+			System.out.println("speed > 0: " + speed);
+			if(speed > user_v){
+				user_accelCtl = 0.0;
+				
+			}else if(speed < user_v){
+				user_accelCtl = 0.5;
+			}
+		}else{
+			System.out.println("speed < 0: " + speed);
+			user_accelCtl = 0.3;
+		}
+		
+		
+		// 핸들조작
+		user_steerCtl = user_steer_coeff * (angle - user_dist_center/track_width);
+		
+		System.out.println("user_accelCtl : " + user_accelCtl);
+		System.out.println("user_steerCtl : " + user_steerCtl);
+		
+		System.out.println("======================== end ================================");
+		
 		////////////////////// output values		
-		cmd.steer = 0.0;
-		cmd.accel = 0.2;
-		cmd.brake = 0.0;
+		cmd.steer = user_steerCtl;
+		cmd.accel = user_accelCtl;
+		cmd.brake = user_brakeCtl;
 		cmd.backward = DrivingInterface.gear_type_forward;
 		////////////////////// END output values
 		
