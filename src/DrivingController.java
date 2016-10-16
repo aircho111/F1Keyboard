@@ -45,9 +45,9 @@ public class DrivingController {
 		
 		// 트랙 코스에 따른 처리
 		if(track_curve_type == 1){ // 우회전 
-			user_dist_center = toMiddle + ( track_width/5 );  
+			user_dist_center = toMiddle + ( track_width/3 );  
 		}else if(track_curve_type == 2){ // 좌회전
-			user_dist_center = toMiddle - ( track_width/5 ); 
+			user_dist_center = toMiddle - ( track_width/3 ); 
 		}else{
 			user_dist_center = toMiddle;
 		}
@@ -81,7 +81,7 @@ public class DrivingController {
 			}
 		}else{
 			System.out.println("speed < 0: " + speed);
-			user_accelCtl = 0.3;
+			user_accelCtl = 0.2;
 		}
 		
 		
